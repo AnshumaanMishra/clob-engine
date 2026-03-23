@@ -1,0 +1,14 @@
+[package]
+name = "clob-engine"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rustc-hash = "1.1.0" # FxHashMap for zero-allocation fast hashing
+
+[dev-dependencies]
+criterion = "0.5.1"
+
+[[bench]]
+name = "matching_bench"
+harness = false
