@@ -27,10 +27,20 @@ of slightly more work during matching on a heavily-cancelled book.
 ## Benchmark
 
 The bench pre-populates 10,000 resting sell orders across 50 price levels, then
-sends in a single aggressive buy that sweeps through multiple levels.
+sends in a single aggressive buy that sweeps through multiple levels. Latency
+is measured per-iteration with `Instant::now()` and aggregated over 100,000
+iterations using `hdrhistogram`.
 
-```
-match_order   time: [3.9315 us  4.0528 us  4.1543 us]
+```txt
+ Latency Results (ns)
+Mean:         605 ns
+Min:          487 ns
+p50:          593 ns
+p90:          668 ns
+p99:          768 ns
+p99.9:       2709 ns
+p99.99:      6923 ns
+Max:        17567 ns
 ```
 
 Run it yourself:
@@ -58,17 +68,17 @@ book.cancel_order(2);
 
 ## Structure
 
-```
+```txt
 src/
   types.rs    -- Order, Side, type aliases for Price/Quantity/OrderId
   engine.rs   -- OrderBook struct and matching logic
   lib.rs      -- module exports
 benches/
-  matching_bench.rs  -- Criterion bench, multi-level sweep scenario
+  matching_bench.rs  -- HDRHistogram-based bench, multi-level sweep scenario
 ```
 
 ## Dependencies
 
 - `rustc-hash` for `FxHashMap`: non-cryptographic hasher, roughly 2x faster than
   std on integer keys which is what order IDs are
-- `criterion` (dev) for benchmarking
+- `hdrhistogram` (dev) for latency distribution benchmarking
